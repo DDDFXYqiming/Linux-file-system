@@ -12,11 +12,17 @@
 
 虚拟磁盘在宿主机上映射为一个 100MB 的二进制文件，划分为严谨的扇区结构：
 
-```
-┌────────────┬─────────────┬─────────────┬─────────────┬──────────────────────────┐
-│ 超级块     │ Inode 位图  │ 块位图      │ Inode 节点表│ 数据块区 (Data Blocks)   │
-│ Superblock │ Inode Map   │ Block Map   │ Inode Table │ (文件实际内容存储区域)    │
-└────────────┴─────────────┴─────────────┴─────────────┴──────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph DiskLayout["虚拟磁盘空间物理布局 (Ext2 风格)"]
+        direction LR
+        SB["<b>超级块 (Superblock)</b><br/>魔数、磁盘容量、块大小、空闲计数"]
+        IM["<b>Inode 位图 (Inode Map)</b><br/>记录 Inode 分配状态 (0/1)"]
+        BM["<b>数据块位图 (Block Map)</b><br/>记录数据块空闲状态 (0/1)"]
+        IT["<b>Inode 表 (Inode Table)</b><br/>存储文件元数据、权限、大小与直接/间接指针"]
+        DB["<b>数据块区 (Data Blocks)</b><br/>文件实际内容与目录项存储区"]
+        SB --- IM --- BM --- IT --- DB
+    end
 ```
 
 * **模块化分层**：
